@@ -11,7 +11,6 @@ body {
 	background-color: #fdfdfd;
 	margin: 0;
 	position:relative;
-  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -288,7 +287,8 @@ nav h1 a {
 #restaurant-container, #reviews-container {
   border-bottom: 1px solid #d9d9d9;
   border-top: 1px solid #fff;
-  padding: 140px 0 30px;
+  padding: 140px 5px 30px;
+  box-sizing: border-box;
   width: 50%;
 }
 #reviews-container {

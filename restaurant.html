@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,9 +18,7 @@
     <!-- Beginning nav -->
     <nav aria-label="breadcrumb">
       <h1><a href="/">Restaurant Reviews</a></h1>
-    </nav>
     <!-- Beginning breadcrumb -->
-    <nav aria-label="Breadcrumb">
     <ul id="breadcrumb" >
       <li><a href="/">Home</a></li>
     </ul>
@@ -36,7 +34,7 @@
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
       <h2 id="restaurant-name"></h2>
-      <img id="restaurant-img" alt="restaurant image">
+      <img id="restaurant-img">
       <p id="restaurant-cuisine"></p>
     </section>
     <section id="restaurant-address-and-hours">
@@ -44,7 +42,7 @@
       <p id="restaurant-address" aria-labelledby="restaurant-address-label"></p>
     <!-- Beginning map -->
     <label id="map-aria-description" class="map-aria-description">Map Box Application</label>
-    <section id="map-container" aria-labelledby="map-aria-description" role="application">
+    <section id="map-container" aria-labelledby="map-aria-description" role="application" tabindex="-1">
       <div id="map"></div>
     </section>
     <!-- End map -->

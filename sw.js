@@ -13,7 +13,7 @@ const urlsToCache = [
 			];
 self.addEventListener("install", event => {
 	event.waitUntil(
-		caches.open(cacheName).then( 	cache => {
+		caches.open(cacheName).then(cache => {
 			return cache
 			.addAll(urlsToCache)
 			.catch(err => {
@@ -36,11 +36,9 @@ self.addEventListener("fetch", event => {
 		event.request.mode = "no-cors";
 	}
 
-	console.log(caches);
-
 	event.respondWith(
 		caches.match(cacheRequest).then(response => {
-			console.log(response);
+			// console.log(response);
 			if (response) return response;
 			return fetch(event.request)
 			.then(fetchResponse => {
