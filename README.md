@@ -28,5 +28,9 @@ This repository uses [leafletjs](https://leafletjs.com/) with [Mapbox](https://w
 
 Most of the code in this project has been written to the ES6 JavaScript specification for compatibility with modern web browsers and future proofing JavaScript code. As much as possible, try to maintain use of ES6 in any additional JavaScript you write. 
 
+### About me
+Hi! My name is Sally Li. Thanks for reviewing my code. It has been a fun ride!
+I went to school for Computer Science but web developing is new to me! 
+I'm trying to train my artistic self. :)
 
 
