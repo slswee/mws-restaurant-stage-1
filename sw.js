@@ -2,8 +2,8 @@ const cacheName = "mws-restaurant-stage-1-002";
 const urlsToCache = [
 			"./",
 			"./index.html",
+			'./restaurant.html',
 			"./css/styles.css",
-			"./data/restaurants.json",
 			"./js/",
 			"./js/dbhelper.js",
 			"./js/main.js",
@@ -25,7 +25,6 @@ self.addEventListener("install", event => {
 
 
 self.addEventListener("fetch", event => {
-	console.log('we are fetching');
 	let cacheRequest = event.request;
 	let cacheUrlObj = new URL(event.request.url);
 	if (event.request.url.indexOf("restaurant.html") > -1) {
@@ -38,7 +37,6 @@ self.addEventListener("fetch", event => {
 
 	event.respondWith(
 		caches.match(cacheRequest).then(response => {
-			// console.log(response);
 			if (response) return response;
 			return fetch(event.request)
 			.then(fetchResponse => {

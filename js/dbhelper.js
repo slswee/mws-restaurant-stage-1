@@ -16,16 +16,41 @@ class DBHelper {
    */
   static fetchRestaurants(callback) {
    // console.log(window);
-    iKeyVal.keys().then(keys => console.log(keys));
-    return fetch(DBHelper.DATABASE_URL)
-          .then(response => response.json())
-          .then(restaurants => {
-            restaurants.forEach(restaurant => {
-              iKeyVal.set(restaurant.id, restaurant);
-              
+   // iKeyVal.keys().then(keys => console.log(keys));
+   // iKeyVal.keys().then(keys => {
+   //  if (keys.length === 0) {
+   //      return fetch(DBHelper.DATABASE_URL)
+   //          .then(response => response.json())
+   //          .then(restaurants => {
+   //            restaurants.forEach(restaurant => {
+   //              iKeyVal.set(restaurant.id, restaurant);
+   //            });
+   //            callback(null, restaurants);
+   //          });
+   //    } else {
+   //      const restaurantsfromIDB = keys.map(key =>  iKeyVal.get(key).then(value => value));
+   //      return callback(null, restaurantsfromIDB);
+   //    }
+   //  });
+
+
+   iKeyVal.keys().then(keys => {
+    if (keys.length === 0) {  
+      return fetch(DBHelper.DATABASE_URL)
+            .then(response => response.json())
+            .then(restaurants => {
+              iKeyVal.set('allRestaurants', restaurants);
+              callback(null, restaurants);
             });
+    } 
+    else {
+          iKeyVal.get('allRestaurants').then(restaurants => {
             callback(null, restaurants);
           });
+        }
+    });
+
+
 
     // let xhr = new XMLHttpRequest();
     // xhr.open('GET', DBHelper.DATABASE_URL);
@@ -47,10 +72,21 @@ class DBHelper {
    */
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
+    iKeyVal.get(id).then(restaurant => {
+      if (restaurant) {
+        callback(null, restaurant);
+      }
+      else {
+        return fetch(DBHelper.DATABASE_URL + `/${id}`)
+              .then(response => response.json())
+              .then(restaurant => {
+                iKeyVal.set(id, restaurant);
+                callback(null, restaurant);
+              });
+      }
+    });
 
-    return fetch(DBHelper.DATABASE_URL + `/${id}`)
-      .then(response => response.json())
-      .then(restaurants => callback(null, restaurants));
+
     // DBHelper.fetchRestaurants((error, restaurants) => {
     //   if (error) {
     //     callback(error, null);
@@ -71,6 +107,7 @@ class DBHelper {
   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
     DBHelper.fetchRestaurants((error, restaurants) => {
+
       if (error) {
         callback(error, null);
       } else {
@@ -165,7 +202,7 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}.jpg`);
+    return restaurant.photograph ? (`/img/${restaurant.photograph}.jpg`) : `/img/na.png`;
   }
 
   /**
