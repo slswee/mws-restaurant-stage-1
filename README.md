@@ -34,3 +34,5 @@ I went to school for Computer Science but web developing is new to me!
 I'm trying to train my artistic self. :)
 
 
+## Project Overview: Stage 2
+### Regarding Lighthouse scores, in the restaurant details page, I realize the best pratices scores is 87. The suggest changes: one is to serve images using HTTP/2 which would require me to use a more complicated server other than the simple python server; the other one is console logs from MapBox which I cannot control. I hope leaving these two suggestions unfinished is okay. I understand why Lighthouse suggest these changes though. 
