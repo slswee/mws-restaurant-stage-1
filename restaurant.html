@@ -64,6 +64,30 @@
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->
+    <!-- Add review -->
+    <section id="add-review-container">
+      <form action="http://localhost:1337/reviews/" method="post">
+        <label for="username">Your Name</label>
+        <input id="restaurant-id" name="restaurant_id" type="number">
+        <input id="username" type="text" name="name">
+    <!-- Five stars rating-->
+          <div class="rate">
+            <input type="radio" id="star5" name="rating" value="5" />
+            <label for="star5" title="text">5 stars</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4" title="text">4 stars</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3" title="text">3 stars</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2" title="text">2 stars</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1" title="text">1 star</label>
+          </div>
+      <label for="new-review-input">Write A Review</label>
+      <input id="new-review-input" type="textarea" name="comments">
+      <button type="submit">Submit</button>
+      </form>
+    </section>
   </main>
   <!-- End main -->
 
