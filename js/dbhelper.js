@@ -67,6 +67,12 @@ class DBHelper {
     // xhr.send();
   }
 
+  static fetchRestaurantReviewsByRestaurantID(id, callback) {
+    return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`)
+          .then(response => response.json())
+          .then(reviews => callback(null, reviews));
+  }
+
   /**
    * Fetch a restaurant by its ID.
    */

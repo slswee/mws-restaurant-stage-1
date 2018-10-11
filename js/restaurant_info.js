@@ -73,6 +73,10 @@ fetchRestaurantFromURL = (callback) => {
       fillRestaurantHTML();
       callback(null, restaurant)
     });
+    DBHelper.fetchRestaurantReviewsByRestaurantID(id, (error, reviews) => {
+      // fill reviews
+      fillReviewsHTML(reviews);
+    });
   }
 }
 
@@ -98,8 +102,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
+
 }
 
 /**
@@ -155,7 +158,7 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = new Date(review.updatedAt).toLocaleDateString("en-US");
   li.appendChild(date);
 
   const rating = document.createElement('p');
