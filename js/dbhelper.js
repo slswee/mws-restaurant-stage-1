@@ -235,5 +235,22 @@ class DBHelper {
     return marker;
   } */
 
+  /**
+  * Favorite a restaurant
+  */
+  static favoriteRestaurant(id) {
+    return fetch(`http://localhost:1337/restaurants/${id}/?is_favorite=true`, {
+        method: 'PUT'
+    });
+  }
+
+  /**
+  * Unfavorite a restaurant
+  */
+  static unfavoriteRestaurant(id) {
+    return fetch(`http://localhost:1337/restaurants/${id}/?is_favorite=false`,{
+        method: 'PUT'
+    });
+  }
 }
 

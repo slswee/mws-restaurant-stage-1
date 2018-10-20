@@ -102,9 +102,17 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
+  // check if favorite
+  if (restaurant.is_favorite) {
+    setFavoriteBtnColor();
+  }
 
 }
 
+setFavoriteBtnColor = () => {
+  const favbtn = document.querySelector('.favme');
+  favbtn.classList.toggle("favorited")
+}
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
  */
@@ -197,3 +205,22 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+/**
+ * Toggle favorite state
+ */
+ toggleFavoriteState = () => {
+  console.log(self.restaurant.is_favorite);
+  if (self.restaurant.is_favorite) {
+    DBHelper.unfavoriteRestaurant(self.restaurant.id).then(
+      () => {
+        setFavoriteBtnColor();
+      });
+  }
+  else {
+    DBHelper.favoriteRestaurant(self.restaurant.id).then(
+      () => {
+        setFavoriteBtnColor();
+      });
+  }
+ }
