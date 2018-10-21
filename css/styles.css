@@ -287,7 +287,7 @@ nav h1 a {
   text-transform: uppercase;
 	width: 100%;
 }
-#restaurant-container, #reviews-container {
+#restaurant-container, #reviews-container, #add-review-container {
   border-bottom: 1px solid #d9d9d9;
   border-top: 1px solid #fff;
   padding: 140px 5px 30px;
@@ -333,7 +333,7 @@ nav h1 a {
 }
 @media screen and (max-width: 750px) {
     #restaurant-container,
-    #reviews-container {
+    #reviews-container, #add-review-container {
         padding: 0;
         width: 100%;
       }
