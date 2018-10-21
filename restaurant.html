@@ -71,8 +71,7 @@
     <!-- End reviews -->
     <!-- Add review -->
     <section id="add-review-container">
-      <form action="http://localhost:1337/reviews/" method="post">
-        <!-- Five stars rating-->
+      <form action="http://localhost:1337/reviews/" onsubmit="createNewReview();return false">
         <div class="rate form-input">
           <input type="radio" id="star5" name="rating" value="5" />
           <label for="star5" title="text">5 stars</label>

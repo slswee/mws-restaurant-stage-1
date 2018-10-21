@@ -73,6 +73,22 @@ class DBHelper {
           .then(reviews => callback(null, reviews));
   }
 
+  static createRestaurantReviewsByRestaurantID(reviewInfo, callback) {
+    return fetch(`http://localhost:1337/reviews/`, {
+        method: 'POST',
+        body: JSON.stringify({
+            "restaurant_id": reviewInfo.id,
+            "name": reviewInfo.reviewerName,
+            "rating": reviewInfo.rating,
+            "comments": reviewInfo.comments
+        })
+      }).then(response => response.json())
+        .then(review => {
+            // iKeyVal.set(id, restaurant);
+            callback(null, review);
+      });
+  }
+
   /**
    * Fetch a restaurant by its ID.
    */

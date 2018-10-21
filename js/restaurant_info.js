@@ -183,7 +183,7 @@ createReviewHTML = (review) => {
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
-fillBreadcrumb = (restaurant=self.restaurant) => {
+fillBreadcrumb = (restaurant = self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
@@ -230,3 +230,23 @@ getParameterByName = (name, url) => {
       });
   }
  }
+
+ /*
+  * Create New Review for Restaurant
+  */
+  createNewReview = () => {
+    const reviewInfo = {
+      id: self.restaurant.id,
+      rating: document.querySelector('input[name="rating"]:checked').value,
+      reviewerName: document.querySelector('input[name="name"]').value,
+      comments: document.querySelector('input[name="comments"]').value
+    }
+    DBHelper.createRestaurantReviewsByRestaurantID(reviewInfo, (error, review)=>{
+      const ul = document.getElementById('reviews-list');
+
+      ul.appendChild(createReviewHTML(review));
+      document.querySelector('input[name="rating"]:checked').checked = false;
+      document.querySelector('input[name="name"]').value = null;
+      document.querySelector('input[name="comments"]').value = null;
+    });
+  }
