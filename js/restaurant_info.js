@@ -103,7 +103,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // check if favorite
-  if (restaurant.is_favorite) {
+  if (restaurant.is_favorite == "true") {
     setFavoriteBtnColor();
   }
 
@@ -210,15 +210,21 @@ getParameterByName = (name, url) => {
  * Toggle favorite state
  */
  toggleFavoriteState = () => {
-  console.log(self.restaurant.is_favorite);
-  if (self.restaurant.is_favorite) {
-    DBHelper.unfavoriteRestaurant(self.restaurant.id).then(
+  const updateRestaurantInfo = (error, restaurant) => {
+    if(error) {
+      console.error(error);
+    } else {
+      self.restaurant = restaurant;
+    }
+  }
+  if (self.restaurant.is_favorite == "true") {
+    DBHelper.unfavoriteRestaurant(self.restaurant.id, updateRestaurantInfo).then(
       () => {
         setFavoriteBtnColor();
       });
   }
   else {
-    DBHelper.favoriteRestaurant(self.restaurant.id).then(
+    DBHelper.favoriteRestaurant(self.restaurant.id, updateRestaurantInfo).then(
       () => {
         setFavoriteBtnColor();
       });

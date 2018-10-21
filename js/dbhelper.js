@@ -78,7 +78,7 @@ class DBHelper {
    */
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
-    iKeyVal.get(id).then(restaurant => {
+    iKeyVal.get(+id).then(restaurant => {
       if (restaurant) {
         callback(null, restaurant);
       }
@@ -86,7 +86,7 @@ class DBHelper {
         return fetch(DBHelper.DATABASE_URL + `/${id}`)
               .then(response => response.json())
               .then(restaurant => {
-                iKeyVal.set(id, restaurant);
+                iKeyVal.set(+id, restaurant);
                 callback(null, restaurant);
               });
       }
@@ -238,19 +238,27 @@ class DBHelper {
   /**
   * Favorite a restaurant
   */
-  static favoriteRestaurant(id) {
+  static favoriteRestaurant(id, callback) {
     return fetch(`http://localhost:1337/restaurants/${id}/?is_favorite=true`, {
         method: 'PUT'
-    });
+    }).then(response => response.json())
+      .then(restaurant => {
+            iKeyVal.set(id, restaurant);
+            callback(null, restaurant);
+      });
   }
 
   /**
   * Unfavorite a restaurant
   */
-  static unfavoriteRestaurant(id) {
+  static unfavoriteRestaurant(id, callback) {
     return fetch(`http://localhost:1337/restaurants/${id}/?is_favorite=false`,{
         method: 'PUT'
-    });
+    }).then(response => response.json())
+      .then(restaurant => {
+            iKeyVal.set(id, restaurant);
+            callback(null, restaurant);
+      });
   }
 }
 
