@@ -15,63 +15,41 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-   // console.log(window);
-   // iKeyVal.keys().then(keys => console.log(keys));
-   // iKeyVal.keys().then(keys => {
-   //  if (keys.length === 0) {
-   //      return fetch(DBHelper.DATABASE_URL)
-   //          .then(response => response.json())
-   //          .then(restaurants => {
-   //            restaurants.forEach(restaurant => {
-   //              iKeyVal.set(restaurant.id, restaurant);
-   //            });
-   //            callback(null, restaurants);
-   //          });
-   //    } else {
-   //      const restaurantsfromIDB = keys.map(key =>  iKeyVal.get(key).then(value => value));
-   //      return callback(null, restaurantsfromIDB);
-   //    }
-   //  });
-
-
-   iKeyVal.keys().then(keys => {
-    if (keys.length === 0) {  
-      return fetch(DBHelper.DATABASE_URL)
-            .then(response => response.json())
-            .then(restaurants => {
-              iKeyVal.set('allRestaurants', restaurants);
-              callback(null, restaurants);
-            });
-    } 
-    else {
-          iKeyVal.get('allRestaurants').then(restaurants => {
-            callback(null, restaurants);
-          });
-        }
+    iKeyVal.get('allRestaurants').then(restaurants => {
+      if (restaurants) {  
+          callback(null, restaurants);
+      } else {
+     // iKeyVal.keys().then(keys => {
+        return fetch(DBHelper.DATABASE_URL)
+              .then(response => response.json())
+              .then(restaurants => {
+                iKeyVal.set('allRestaurants', restaurants);
+                callback(null, restaurants);
+              });
+            
+      }
     });
-
-
-
-    // let xhr = new XMLHttpRequest();
-    // xhr.open('GET', DBHelper.DATABASE_URL);
-    // xhr.onload = () => {
-    //   if (xhr.status === 200) { // Got a success response from server!
-    //     const json = JSON.parse(xhr.responseText);
-    //     const restaurants = json.restaurants;
-    //     callback(null, restaurants);
-    //   } else { // Oops!. Got an error from server.
-    //     const error = (`Request failed. Returned status of ${xhr.status}`);
-    //     callback(error, null);
-    //   }
-    // };
-    // xhr.send();
   }
+
+  /**
+   * Fetch all reviews for a restaurant and store in idb-keyval
+   */
 
   static fetchRestaurantReviewsByRestaurantID(id, callback) {
-    return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`)
+    iKeyVal.get(`Reviews_${id}`).then(reviews => {
+      if (reviews) {
+          callback(null, reviews);
+      } else {
+        return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`)
           .then(response => response.json())
-          .then(reviews => callback(null, reviews));
+          .then(reviews => {
+            iKeyVal.set(`Reviews_${id}`, reviews);
+            callback(null, reviews);
+          });
+      }
+    });
   }
+
 
   static createRestaurantReviewsByRestaurantID(reviewInfo, callback) {
     return fetch(`http://localhost:1337/reviews/`, {
