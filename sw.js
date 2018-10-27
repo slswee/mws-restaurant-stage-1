@@ -83,7 +83,7 @@ self.syncReview = () => {
 	            	});
 	            let [discard, ...reducedOfflineReview] = offlineReview;
 	            //delete the already posted offline reviews from iKeyval
-	            return iKeyval.set('offline_reviews', reducedOfflineReview).then(() => {
+	            return iKeyVal.set('offline_reviews', reducedOfflineReview).then(() => {
 	            		console.log('update offline review success')
 		            	return self.syncReview();
 		            });
