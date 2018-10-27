@@ -52,22 +52,25 @@ class DBHelper {
 
 
   static createRestaurantReviewsByRestaurantID(reviewInfo, callback) {
-    // return fetch(`http://localhost:1337/reviews/`, {
-    //     method: 'POST',
-    //     body: JSON.stringify({
-    //         "restaurant_id": reviewInfo.id,
-    //         "name": reviewInfo.reviewerName,
-    //         "rating": reviewInfo.rating,
-    //         "comments": reviewInfo.comments
-    //     })
-    //   }).then(response => response.json())
-    //     .then(review => {
-    //         iKeyVal.get(`Reviews_${reviewInfo.id}`).then(currentReviewsInIDB => {
-    //               iKeyVal.set(`Reviews_${reviewInfo.id}`, [...currentReviewsInIDB, review]);
-    //         });
-    //         callback(null, review);
-    //   });
-    iKeyVal.get('offline_reviews').then(offlineReview => {
+    // if online
+    if(navigator.onLine) {
+      return fetch(`http://localhost:1337/reviews/`, {
+        method: 'POST',
+        body: JSON.stringify({
+            "restaurant_id": reviewInfo.id,
+            "name": reviewInfo.reviewerName,
+            "rating": reviewInfo.rating,
+            "comments": reviewInfo.comments
+        })
+      }).then(response => response.json())
+        .then(review => {
+            iKeyVal.get(`Reviews_${reviewInfo.id}`).then(currentReviewsInIDB => {
+                  iKeyVal.set(`Reviews_${reviewInfo.id}`, [...currentReviewsInIDB, review]);
+            });
+            callback(null, review);
+      });
+    } else { // offline
+      iKeyVal.get('offline_reviews').then(offlineReview => {
       const reviewForm = JSON.stringify({
             "restaurant_id": reviewInfo.id,
             "name": reviewInfo.reviewerName,
@@ -80,7 +83,38 @@ class DBHelper {
         iKeyVal.set('offline_reviews', [reviewForm]);
       }
     })
+    }
   }
+
+  /**
+   * Handle offline reviews pending POST
+   */
+  static syncReview() {
+  //TODO: go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
+  return iKeyVal.get('offline_reviews').then(offlineReview => {
+    if(offlineReview) {
+      return fetch(`http://localhost:1337/reviews/`, {
+          method: 'POST',
+          body: offlineReview[0]
+      }).then(response => response.json())
+            .then(review => {
+              iKeyVal.get(`Reviews_${reviewInfo.id}`).then(currentReviewsInIDB => {
+                    iKeyVal.set(`Reviews_${reviewInfo.id}`, [...currentReviewsInIDB, review]);
+                });
+              let [discard, ...reducedOfflineReview] = offlineReview;
+              //delete the already posted offline reviews from iKeyval
+              return iKeyval.set('offline_reviews', reducedOfflineReview).then(() => {
+                  return self.syncReview();
+                });
+            })
+            .catch(err => {
+              console.log("syncReview failed.");
+            });
+
+    }
+  })
+  console.log("pending revivews posted");
+} 
 
   /**
    * Fetch a restaurant by its ID.

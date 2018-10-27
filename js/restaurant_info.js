@@ -31,6 +31,7 @@ initMap = () => {
       }).addTo(newMap);
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
+      DBHelper.syncReview();
     }
   });
 }  

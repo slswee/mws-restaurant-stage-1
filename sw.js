@@ -67,7 +67,7 @@ self.addEventListener('sync', function(event) {
 
 self.syncReview = () => {
 	//TODO: go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
-	return iKeyval.get('offline_reviews').then(offlineReview => {
+	return iKeyVal.get('offline_reviews').then(offlineReview => {
 		if(offlineReview) {
 
 			return fetch(`http://localhost:1337/reviews/`, {
