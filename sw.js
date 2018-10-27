@@ -67,32 +67,33 @@ self.addEventListener('sync', function(event) {
 
 self.syncReview = () => {
 	// go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
-	return iKeyVal.get('offline_reviews').then(offlineReview => {
-		if(offlineReview) {
+  return iKeyVal.get('offline_reviews').then(offlineReview => {
+    if(offlineReview) {
+      let [reviewToPost, ...reducedOfflineReview] = offlineReview;
 
-			return fetch(`http://localhost:1337/reviews/`, {
-	        method: 'POST',
-	        body: offlineReview[0]
-			}).then(response => response.json())
-	          .then(review => {
-	          	console.log('fetch success');
-	            iKeyVal.get(`Reviews_${reviewInfo.id}`).then(currentReviewsInIDB => {
-	          			console.log('get review success', currentReviewsInIDB);
+      return fetch(`http://localhost:1337/reviews/`, {
+          method: 'POST',
+          body: reviewToPost
+      }).then(response => response.json())
+            .then(review => {
+              console.log("review fetch success", review);
+              return iKeyVal.get(`Reviews_${review.restaurant_id}`).then(currentReviewsInIDB => {
+                console.log("getting reviews from iKeyval", currentReviewsInIDB, review);
+                return iKeyVal.set(`Reviews_${review.restaurant_id}`, [...currentReviewsInIDB, review]);
+              });
+            }).then(() => {
+              console.log("before discarding");
+              console.log(reviewToPost)
+              //delete the already posted offline reviews from iKeyval
+              return iKeyVal.set('offline_reviews', reducedOfflineReview);
+            }).then(() => {
+              console.log("updated offline reviews");
+              return DBHelper.syncReview();
+            })
+            .catch(err => {
+              console.log("syncReview failed22222.");
+            });
 
-	                  iKeyVal.set(`Reviews_${reviewInfo.id}`, [...currentReviewsInIDB, review]);
-	            	});
-	            let [discard, ...reducedOfflineReview] = offlineReview;
-	            //delete the already posted offline reviews from iKeyval
-	            return iKeyVal.set('offline_reviews', reducedOfflineReview).then(() => {
-	            		console.log('update offline review success')
-		            	return self.syncReview();
-		            });
-	      		})
-	          .catch(err => {
-	          	console.log("syncReview failed.");
-	          });
-
-		}
-	})
-	console.log("hello background sync");
+    }
+  });
 } 
