@@ -66,8 +66,8 @@ self.addEventListener('sync', function(event) {
 });
 
 self.syncReview = () => {
-	//TODO: go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
-	return iKeyval.get('offline_reviews').then(offlineReview => {
+	// go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
+	return iKeyVal.get('offline_reviews').then(offlineReview => {
 		if(offlineReview) {
 
 			return fetch(`http://localhost:1337/reviews/`, {
@@ -75,12 +75,16 @@ self.syncReview = () => {
 	        body: offlineReview[0]
 			}).then(response => response.json())
 	          .then(review => {
+	          	console.log('fetch success');
 	            iKeyVal.get(`Reviews_${reviewInfo.id}`).then(currentReviewsInIDB => {
+	          			console.log('get review success', currentReviewsInIDB);
+
 	                  iKeyVal.set(`Reviews_${reviewInfo.id}`, [...currentReviewsInIDB, review]);
 	            	});
 	            let [discard, ...reducedOfflineReview] = offlineReview;
 	            //delete the already posted offline reviews from iKeyval
 	            return iKeyval.set('offline_reviews', reducedOfflineReview).then(() => {
+	            		console.log('update offline review success')
 		            	return self.syncReview();
 		            });
 	      		})
