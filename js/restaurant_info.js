@@ -31,7 +31,10 @@ initMap = () => {
       }).addTo(newMap);
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
-      DBHelper.syncReview();
+      window.addEventListener('online', () => {
+        DBHelper.syncReview(this.addReviewToDom);
+        document.getElementById('pending-post').style.display = 'none';
+      });
     }
   });
 }  
@@ -242,15 +245,14 @@ getParameterByName = (name, url) => {
       reviewerName: document.querySelector('input[name="name"]').value,
       comments: document.querySelector('input[name="comments"]').value
     }
-    navigator.serviceWorker.ready.then(function(swRegistration) {
-      return swRegistration.sync.register('myFirstSync');
-    });
-    DBHelper.createRestaurantReviewsByRestaurantID(reviewInfo, (error, review)=>{
-      const ul = document.getElementById('reviews-list');
 
+    DBHelper.createRestaurantReviewsByRestaurantID(reviewInfo, this.addReviewToDom);
+  }
+
+  addReviewToDom = (error, review) => {
+      const ul = document.getElementById('reviews-list');
       ul.appendChild(createReviewHTML(review));
       document.querySelector('input[name="rating"]:checked').checked = false;
       document.querySelector('input[name="name"]').value = null;
       document.querySelector('input[name="comments"]').value = null;
-    });
   }

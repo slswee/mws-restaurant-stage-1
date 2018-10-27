@@ -87,6 +87,7 @@ initMap = () => {
   }).addTo(newMap);
 
   updateRestaurants();
+  window.addEventListener('online', DBHelper.syncReview);
 }
 /* window.initMap = () => {
   let loc = {

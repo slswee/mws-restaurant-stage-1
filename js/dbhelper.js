@@ -70,6 +70,8 @@ class DBHelper {
             callback(null, review);
       });
     } else { // offline
+      let msg = document.getElementById('pending-post');
+      msg.style.display = '';
       iKeyVal.get('offline_reviews').then(offlineReview => {
       const reviewForm = JSON.stringify({
             "restaurant_id": reviewInfo.id,
@@ -89,7 +91,7 @@ class DBHelper {
   /**
    * Handle offline reviews pending POST
    */
-  static syncReview() {
+  static syncReview(callback) {
   //TODO: go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
   return iKeyVal.get('offline_reviews').then(offlineReview => {
     if(offlineReview) {
@@ -103,6 +105,9 @@ class DBHelper {
               console.log("review fetch success", review);
               return iKeyVal.get(`Reviews_${review.restaurant_id}`).then(currentReviewsInIDB => {
                 console.log("getting reviews from iKeyval", currentReviewsInIDB, review);
+                if(callback) {
+                  callback(null, review);
+                }
                 return iKeyVal.set(`Reviews_${review.restaurant_id}`, [...currentReviewsInIDB, review]);
               });
             }).then(() => {
