@@ -241,6 +241,9 @@ getParameterByName = (name, url) => {
       reviewerName: document.querySelector('input[name="name"]').value,
       comments: document.querySelector('input[name="comments"]').value
     }
+    navigator.serviceWorker.ready.then(function(swRegistration) {
+      return swRegistration.sync.register('myFirstSync');
+    });
     DBHelper.createRestaurantReviewsByRestaurantID(reviewInfo, (error, review)=>{
       const ul = document.getElementById('reviews-list');
 

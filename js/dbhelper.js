@@ -52,19 +52,34 @@ class DBHelper {
 
 
   static createRestaurantReviewsByRestaurantID(reviewInfo, callback) {
-    return fetch(`http://localhost:1337/reviews/`, {
-        method: 'POST',
-        body: JSON.stringify({
+    // return fetch(`http://localhost:1337/reviews/`, {
+    //     method: 'POST',
+    //     body: JSON.stringify({
+    //         "restaurant_id": reviewInfo.id,
+    //         "name": reviewInfo.reviewerName,
+    //         "rating": reviewInfo.rating,
+    //         "comments": reviewInfo.comments
+    //     })
+    //   }).then(response => response.json())
+    //     .then(review => {
+    //         iKeyVal.get(`Reviews_${reviewInfo.id}`).then(currentReviewsInIDB => {
+    //               iKeyVal.set(`Reviews_${reviewInfo.id}`, [...currentReviewsInIDB, review]);
+    //         });
+    //         callback(null, review);
+    //   });
+    iKeyVal.get('offline_reviews').then(offlineReview => {
+      const reviewForm = JSON.stringify({
             "restaurant_id": reviewInfo.id,
             "name": reviewInfo.reviewerName,
             "rating": reviewInfo.rating,
             "comments": reviewInfo.comments
-        })
-      }).then(response => response.json())
-        .then(review => {
-            // iKeyVal.set(id, restaurant);
-            callback(null, review);
-      });
+        });
+      if(offlineReview) {
+        iKeyVal.set('offline_reviews', [...offlineReview, reviewForm]);
+      } else {
+        iKeyVal.set('offline_reviews', [reviewForm]);
+      }
+    })
   }
 
   /**
