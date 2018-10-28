@@ -8,6 +8,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
   initMap();
 });
 
+window.addEventListener('load', () => {
+  DBHelper.syncReview(this.addReviewToDom);
+  DBHelper.syncFav();
+})
+
+window.addEventListener('online', () => {
+  DBHelper.syncReview(this.addReviewToDom);
+  document.getElementById('pending-post').style.display = 'none';
+  DBHelper.syncFav();
+});
+
 /**
  * Initialize leaflet map
  */
@@ -31,10 +42,6 @@ initMap = () => {
       }).addTo(newMap);
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
-      window.addEventListener('online', () => {
-        DBHelper.syncReview(this.addReviewToDom);
-        document.getElementById('pending-post').style.display = 'none';
-      });
     }
   });
 }  
@@ -214,6 +221,7 @@ getParameterByName = (name, url) => {
  * Toggle favorite state
  */
  toggleFavoriteState = () => {
+  console.log("toggleFav is fired.");
   const updateRestaurantInfo = (error, restaurant) => {
     if(error) {
       console.error(error);
@@ -221,17 +229,27 @@ getParameterByName = (name, url) => {
       self.restaurant = restaurant;
     }
   }
-  if (self.restaurant.is_favorite == "true") {
-    DBHelper.unfavoriteRestaurant(self.restaurant.id, updateRestaurantInfo).then(
-      () => {
-        setFavoriteBtnColor();
-      });
-  }
-  else {
-    DBHelper.favoriteRestaurant(self.restaurant.id, updateRestaurantInfo).then(
-      () => {
-        setFavoriteBtnColor();
-      });
+  if(navigator.onLine) {
+    if(self.restaurant.is_favorite == "true") {
+      DBHelper.unfavoriteRestaurant(self.restaurant.id, updateRestaurantInfo).then(
+        () => {
+          setFavoriteBtnColor();
+        });
+    } else {
+      DBHelper.favoriteRestaurant(self.restaurant.id, updateRestaurantInfo).then(
+        () => {
+          setFavoriteBtnColor();
+        });
+    }
+  } else { // offline
+    // save to iKeyVal pending fav to post
+    iKeyVal.get("offline_favs").then( fav => {
+      if(fav) {
+        iKeyVal.set("offline_favs", [...fav, {restaurant_id: self.restaurant.id, currentFavState: self.restaurant.is_favorite}]);
+      } else {
+        iKeyVal.set("offline_favs", [{restaurant_id: self.restaurant.id, currentFavState: self.restaurant.is_favorite}]);
+      }
+    });
   }
  }
 

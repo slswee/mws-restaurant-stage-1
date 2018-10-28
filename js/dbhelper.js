@@ -92,10 +92,10 @@ class DBHelper {
    * Handle offline reviews pending POST
    */
   static syncReview(callback) {
-  //TODO: go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
+  // go through the reviews in offline iKeyval, POST each one, and then delete offline reviews
   return iKeyVal.get('offline_reviews').then(offlineReview => {
     if(offlineReview) {
-      let [reviewToPost, ...reducedOfflineReview] = offlineReview;
+      const [reviewToPost, ...reducedOfflineReview] = offlineReview;
 
       return fetch(`http://localhost:1337/reviews/`, {
           method: 'POST',
@@ -113,20 +113,41 @@ class DBHelper {
             }).then(() => {
               console.log("before discarding");
               console.log(reviewToPost)
-              //delete the already posted offline reviews from iKeyval
+              //delete the already posted offline reviews from iKeyVal
               return iKeyVal.set('offline_reviews', reducedOfflineReview);
             }).then(() => {
               console.log("updated offline reviews");
               return DBHelper.syncReview();
             })
             .catch(err => {
-              console.log("syncReview failed22222.");
+              console.log("syncReview failed.");
             });
 
     }
   })
-  console.log("pending revivews posted");
 } 
+
+  /**
+   * Handle offline favorite pending POST
+   */
+   static syncFav() {
+    let reducedOfflineFav;
+      return iKeyVal.get('offline_favs').then(offlineFav => {
+        if(offlineFav && offlineFav.length) {
+          const [favToPost, ...reducedFav] = offlineFav;
+          reducedOfflineFav = reducedFav;
+          const helperKey = favToPost.currentFavState == "true" ? 'unfavoriteRestaurant' : 'favoriteRestaurant';
+          return DBHelper[helperKey](favToPost.restaurant_id, () => {}).then( () => {
+              // delete the already posted fav states from iKeyVal
+              return iKeyVal.set('offline_favs', reducedOfflineFav);
+            }).then( () => {
+              return DBHelper.syncFav();
+            });
+        }
+      }).catch( err => {
+        console.log("syncFav failed: ", err);
+      });
+   }
 
   /**
    * Fetch a restaurant by its ID.
@@ -298,8 +319,8 @@ class DBHelper {
         method: 'PUT'
     }).then(response => response.json())
       .then(restaurant => {
-            iKeyVal.set(id, restaurant);
             callback(null, restaurant);
+            return iKeyVal.set(id, restaurant);
       });
   }
 
@@ -311,8 +332,8 @@ class DBHelper {
         method: 'PUT'
     }).then(response => response.json())
       .then(restaurant => {
-            iKeyVal.set(id, restaurant);
             callback(null, restaurant);
+            return iKeyVal.set(id, restaurant);
       });
   }
 }
