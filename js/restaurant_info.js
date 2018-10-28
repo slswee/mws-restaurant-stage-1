@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
 window.addEventListener('online', () => {
   DBHelper.syncReview(this.addReviewToDom);
   document.getElementById('pending-post').style.display = 'none';
-  DBHelper.syncFav();
+  DBHelper.syncFav(this.setFavoriteBtnColor);
 });
 
 /**
@@ -221,7 +221,6 @@ getParameterByName = (name, url) => {
  * Toggle favorite state
  */
  toggleFavoriteState = () => {
-  console.log("toggleFav is fired.");
   const updateRestaurantInfo = (error, restaurant) => {
     if(error) {
       console.error(error);

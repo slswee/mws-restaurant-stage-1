@@ -102,25 +102,20 @@ class DBHelper {
           body: reviewToPost
       }).then(response => response.json())
             .then(review => {
-              console.log("review fetch success", review);
               return iKeyVal.get(`Reviews_${review.restaurant_id}`).then(currentReviewsInIDB => {
-                console.log("getting reviews from iKeyval", currentReviewsInIDB, review);
                 if(callback) {
                   callback(null, review);
                 }
                 return iKeyVal.set(`Reviews_${review.restaurant_id}`, [...currentReviewsInIDB, review]);
               });
             }).then(() => {
-              console.log("before discarding");
-              console.log(reviewToPost)
               //delete the already posted offline reviews from iKeyVal
               return iKeyVal.set('offline_reviews', reducedOfflineReview);
             }).then(() => {
-              console.log("updated offline reviews");
               return DBHelper.syncReview();
             })
             .catch(err => {
-              console.log("syncReview failed.");
+              console.error("syncReview failed.", err);
             });
 
     }
@@ -130,7 +125,7 @@ class DBHelper {
   /**
    * Handle offline favorite pending POST
    */
-   static syncFav() {
+   static syncFav(callback) {
     let reducedOfflineFav;
       return iKeyVal.get('offline_favs').then(offlineFav => {
         if(offlineFav && offlineFav.length) {
@@ -138,6 +133,9 @@ class DBHelper {
           reducedOfflineFav = reducedFav;
           const helperKey = favToPost.currentFavState == "true" ? 'unfavoriteRestaurant' : 'favoriteRestaurant';
           return DBHelper[helperKey](favToPost.restaurant_id, () => {}).then( () => {
+              if (callback) {
+                callback();
+              }
               // delete the already posted fav states from iKeyVal
               return iKeyVal.set('offline_favs', reducedOfflineFav);
             }).then( () => {
@@ -145,7 +143,7 @@ class DBHelper {
             });
         }
       }).catch( err => {
-        console.log("syncFav failed: ", err);
+        console.error("syncFav failed: ", err);
       });
    }
 
@@ -284,7 +282,7 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return restaurant.photograph ? (`/img/${restaurant.photograph}.jpg`) : `/img/na.png`;
+    return restaurant.photograph ? (`/img/${restaurant.photograph}-2.jpg`) : `/img/na.png`;
   }
 
   /**
